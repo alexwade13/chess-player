@@ -11,7 +11,7 @@ export default class Square extends Component {
 
     const { x, y } = this.props;
     const black = (x + y) % 2 === 1;
-    const backgroundColor = black ? 'black' : 'white';
+    const backgroundColor = black ? 'blue' : 'red';
     const color = black ? 'white' : 'black';
 
     return (

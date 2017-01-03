@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Square from './Square';
 import sample from '../sample_board.json';
+import pawn from './img/b_queen.png';
 
 export default class Board extends Component {
   static propTypes = {
@@ -16,7 +17,7 @@ export default class Board extends Component {
            style={{ width: '12.5%', height: '12.5%' }}>
         <Square x={x}
                 y={y}>
-                
+          <img src={pawn}   />
         </Square>
       </div>
     );

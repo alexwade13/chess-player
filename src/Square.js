@@ -29,7 +29,7 @@ export default class Square extends Component {
         height: '100%'
       }}>
         <div className={specialStyle}>
-          <img src={piece}   />
+          <img className="pieces" src={piece}   />
         </div>
 
       </div>

@@ -183,13 +183,15 @@ export default class Board extends Component {
     }
 
     return (
+      
       <div className='Board'>
         {squares}
-      <div className='button'>
-        <button onClick={this.prevStep.bind(this)}>back</button>
-        <button onClick={this.nextStep.bind(this)}>forward</button>
-        <button onClick={this.play.bind(this)}>play</button>
-      </div>
+        <div className='button'>
+          <button onClick={this.prevStep.bind(this)}>back</button>
+          <button onClick={this.nextStep.bind(this)}>forward</button>
+          <button onClick={this.play.bind(this)}>play</button>
+        </div>
+
       </div>
     );
   }

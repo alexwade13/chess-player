@@ -1,6 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import Square from './Square';
-import sample from '../sample_board.json';
 import b_rook from './img/b_rook.png';
 import w_rook from './img/w_rook.png';
 import b_knight from './img/b_knight.png';
@@ -15,44 +14,48 @@ import b_pawn from './img/b_pawn.png';
 import w_pawn from './img/w_pawn.png';
 
 export default class Board extends Component {
-  static propTypes = {
-  
-  };
 
   constructor(props) {
     super(props);
-    const board = sample.game_board.board
-    const pieces = sample.game_board.board.pieces.split('/').map((row)=>row.split(""))
 
     //move represents which move state we are in. -1 is the current board.
-    //0 is the previous move, 1 the move before that, etc, till the board is at starting state
+    // 0 is the previous move, 1 the move before that, etc, till the board is at starting state
     this.state = {
-
-      board,
-      pieces,
-      move:-1,
-      last_move_squares:board.last_move_squares,
-      special_square:board.special_square
-
     };
   }
 
-
+ componentWillMount(){
+    fetch('./Board')  
+      .then(
+        (response)=> { 
+          response.json().then((data)=> {  
+            const board = data.game_board.board
+            const pieces = data.game_board.board.pieces.split('/').map((row)=>row.split(""))
+            this.setState ({
+              master:data,
+              board,
+              pieces,
+              move:-1,
+              last_move_squares:board.last_move_squares,
+              special_square:board.special_square
+            });
+          });  
+    })
+  }
   renderSquare(i,x,y,direction = null) {
-
 
     var style = { width: '12.5%', height: '12.5%' }
     var piece = this.findPiece(this.state.pieces[x][y])
 
     var {last_move_squares,special_square} = this.state;
     var {to, from} = last_move_squares ? last_move_squares : {}
-
+    var move_square;
     if(to && to.row === x && to.col === y){
-      last_move_squares = true;
+      move_square = true;
     } else if( from && from.row === x && from.col === y){
-      last_move_squares = true;
+      move_square = true;
     } else {
-      last_move_squares = false;
+      move_square = false;
     }
 
     if(special_square && special_square.row === x && special_square.col === y){
@@ -67,15 +70,14 @@ export default class Board extends Component {
         <Square x={x}
                 y={y}
                 piece={piece}
-                last_move_squares={last_move_squares}
+                move_square={move_square}
                 special_square={special_square}
                 >
-          
         </Square>
       </div>
     );
   }
-
+  //finds the image associated with the letter piece
   findPiece(piece){
     switch(piece){
       case 'p':
@@ -103,12 +105,11 @@ export default class Board extends Component {
       case'K':
         return b_king
 
-        
     }
   }
 
   prevStep(){
-    var length = sample.past_moves_board.length
+    var length = this.state.master.past_moves_board.length
     var move = this.state.move + 1
     if(move === length){
       move = -1
@@ -125,12 +126,13 @@ export default class Board extends Component {
   }
 
   setBoard(move){
+    var master = this.state.master
     var pieces
     var board
     if(move === -1){
-      board = sample.game_board.board
+      board = master.game_board.board
     } else {
-      board = sample.past_moves_board[move]
+      board = master.past_moves_board[move]
     }
     pieces = board.pieces.split('/').map((row)=>row.split("")) 
     this.setState({board:board,pieces:pieces, move:move,last_move_squares:board.last_move_squares, special_square:board.special_square})
@@ -144,46 +146,45 @@ export default class Board extends Component {
           recurse.apply(this)
         }, 500)  
       }
-
     }
-    this.setState({move:sample.past_moves_board.length},recurse.bind(this))
+    this.setState({move:this.state.master.past_moves_board.length},recurse.bind(this))
   
   }
 
   render() {
 
     const squares = [];
-    var x;
-    var y;
+    var x, y;
     var {from,to} = this.state.last_move_squares !== undefined ? this.state.last_move_squares : {}
     
     var payload = []
     var special = this.state.special;
-    for (let i = 0; i < 64; i++) {
-      payload = []
-      x = Math.floor(i / 8);
-      y = i % 8;
+    //this is only for the intital render, as it will re render after fetch call in componentWillMount
+    if(this.state.board !== undefined) {
+      for (var i = 0; i < 64; i++) {
+        payload = []
+        x = Math.floor(i / 8);
+        y = i % 8;
 
-      payload.push(i);
-      payload.push(x);
-      payload.push(y);
+        payload.push(i);
+        payload.push(x);
+        payload.push(y);
 
-      if(from && from.row === x && from.col === y){
-        payload.push("from")
-      } else if(to && to.row === x && to.col === y){
-        payload.push("to")
+        if(from && from.row === x && from.col === y){
+          payload.push("from")
+        } else if(to && to.row === x && to.col === y){
+          payload.push("to")
+        }
+
+        if(special && special.row === x && special.col === y ) {
+          payload.push("special")
+        }
+
+        squares.push(this.renderSquare(...payload));  
+
       }
-
-      if(special && special.row === x && special.col === y ) {
-        payload.push("special")
-      }
-
-      squares.push(this.renderSquare(...payload));  
-
     }
-
     return (
-      
       <div className='Board'>
         {squares}
         <div className='button'>
@@ -191,7 +192,6 @@ export default class Board extends Component {
           <button onClick={this.nextStep.bind(this)}>forward</button>
           <button onClick={this.play.bind(this)}>play</button>
         </div>
-
       </div>
     );
   }

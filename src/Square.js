@@ -1,27 +1,19 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 
 export default class Square extends Component {
-  static propTypes = {
-    x: PropTypes.number,
-    y: PropTypes.number
-    
-    
-  };
-
   render() {
-    const { x, y, piece, last_move_squares, special_square} = this.props;
+    const { x, y, piece, move_square, special_square} = this.props;
     const black = (x + y) % 2 === 1;
-    var backgroundColor = black ? '#AF8769' : '#EFD9BA';
-    if(last_move_squares){
+
+    var backgroundColor = black ? '#EFD9BA' :'#AF8769' ;
+    if(move_square){
       backgroundColor = 'yellow'
     }
     var specialStyle = "none";
     if(special_square) {
       specialStyle = "special"
-      console.log("special")
     }
-    const color = black ? 'white' : 'black';
-// style={{'borderColor':'yellow',border:'1px solid'}}
+    
     return (
       <div style={{
         backgroundColor,

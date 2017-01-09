@@ -2,7 +2,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-var sample = require('./sample_board.json')
+let sample = require('./sample_board.json')
 
 const app = express();
 

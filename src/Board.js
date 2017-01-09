@@ -44,12 +44,12 @@ export default class Board extends Component {
   }
   renderSquare(i,x,y,direction = null) {
 
-    var style = { width: '12.5%', height: '12.5%' }
-    var piece = this.findPiece(this.state.pieces[x][y])
+    let style = { width: '12.5%', height: '12.5%' }
+    let piece = this.findPiece(this.state.pieces[x][y])
 
-    var {last_move_squares,special_square} = this.state;
-    var {to, from} = last_move_squares ? last_move_squares : {}
-    var move_square;
+    let {last_move_squares,special_square} = this.state;
+    let {to, from} = last_move_squares ? last_move_squares : {}
+    let move_square;
     if(to && to.row === x && to.col === y){
       move_square = true;
     } else if( from && from.row === x && from.col === y){
@@ -109,8 +109,8 @@ export default class Board extends Component {
   }
 
   prevStep(){
-    var length = this.state.master.past_moves_board.length
-    var move = this.state.move + 1
+    let length = this.state.master.past_moves_board.length
+    let move = this.state.move + 1
     if(move === length){
       move = -1
     }
@@ -118,7 +118,7 @@ export default class Board extends Component {
   }
 
   nextStep(){
-    var move = (this.state.move - 1)
+    let move = (this.state.move - 1)
     if(move < -1){
       move += 1
     }
@@ -126,9 +126,9 @@ export default class Board extends Component {
   }
 
   setBoard(move){
-    var master = this.state.master
-    var pieces
-    var board
+    let master = this.state.master
+    let pieces
+    let board
     if(move === -1){
       board = master.game_board.board
     } else {
@@ -139,7 +139,7 @@ export default class Board extends Component {
   }
 
   play(){
-    var recurse = function(){
+    let recurse = ()=>{
       if(this.state.move !== -1) {
         this.nextStep()
         setTimeout(()=>{
@@ -147,41 +147,25 @@ export default class Board extends Component {
         }, 500)  
       }
     }
-    this.setState({move:this.state.master.past_moves_board.length},recurse.bind(this))
+    this.setState({move:this.state.master.past_moves_board.length},recurse)
   
   }
 
   render() {
 
     const squares = [];
-    var x, y;
-    var {from,to} = this.state.last_move_squares !== undefined ? this.state.last_move_squares : {}
-    
-    var payload = []
-    var special = this.state.special;
+    let x, y;
+    let {from,to} = this.state.last_move_squares !== undefined ? this.state.last_move_squares : {}
+
+
+    let special = this.state.special;
     //this is only for the intital render, as it will re render after fetch call in componentWillMount
     if(this.state.board !== undefined) {
-      for (var i = 0; i < 64; i++) {
-        payload = []
+      for (let i = 0; i < 64; i++) {
         x = Math.floor(i / 8);
         y = i % 8;
 
-        payload.push(i);
-        payload.push(x);
-        payload.push(y);
-
-        if(from && from.row === x && from.col === y){
-          payload.push("from")
-        } else if(to && to.row === x && to.col === y){
-          payload.push("to")
-        }
-
-        if(special && special.row === x && special.col === y ) {
-          payload.push("special")
-        }
-
-        squares.push(this.renderSquare(...payload));  
-
+        squares.push(this.renderSquare(i,x,y));  
       }
     }
     return (

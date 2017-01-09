@@ -5,11 +5,11 @@ export default class Square extends Component {
     const { x, y, piece, move_square, special_square} = this.props;
     const black = (x + y) % 2 === 1;
 
-    var backgroundColor = black ? '#EFD9BA' :'#AF8769' ;
+    let backgroundColor = black ? '#EFD9BA' :'#AF8769' ;
     if(move_square){
       backgroundColor = 'yellow'
     }
-    var specialStyle = "none";
+    let specialStyle = "none";
     if(special_square) {
       specialStyle = "special"
     }
